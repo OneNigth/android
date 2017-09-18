@@ -4,8 +4,17 @@ import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.example.CommonOkHttpClient;
+import com.example.request.CommonRequest;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.Response;
 
 import static org.junit.Assert.*;
 
@@ -23,4 +32,24 @@ public class ExampleInstrumentedTest {
 
         assertEquals("com.example.okhttpsdk", appContext.getPackageName());
     }
+
+    //网络请求
+    @Test
+    public void commonOkHttpClientTest(){
+
+//        //callback未封装
+//        CommonOkHttpClient.sendRequest(CommonRequest.creatGetRequest("http://www.imook.com", null), new Callback() {
+//            //请求错误
+//            @Override
+//            public void onFailure(Call call, IOException e) {
+//
+//            }
+//             //处理异常 数据解析 数据转发
+//            @Override
+//            public void onResponse(Call call, Response response) throws IOException {
+//
+//            }
+//        });
+    }
+
 }
