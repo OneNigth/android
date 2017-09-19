@@ -1,1 +1,1 @@
-include ':app', ':okhttpsdk'
+include ':app', ':mysdk'
