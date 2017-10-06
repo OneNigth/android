@@ -1,8 +1,12 @@
 package com.example.yj.view.fragment.home;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.exception.OkHttpException;
 import com.example.listener.DisposeDataListener;
@@ -18,6 +23,8 @@ import com.example.yj.adapter.CourseAdapter;
 import com.example.yj.model.recommand.BaseRecommandModel;
 import com.example.yj.network.http.RequestCenter;
 import com.example.yj.view.fragment.BaseFragment;
+import com.example.yj.view.home.HomeHeaderLayout;
+import com.example.yj.zxing.app.CaptureActivity;
 
 import static android.content.ContentValues.TAG;
 
@@ -25,8 +32,9 @@ import static android.content.ContentValues.TAG;
  * Created by yj on 2017/9/15.
  */
 
-public class HomeFragment extends BaseFragment {
+public class HomeFragment extends BaseFragment implements View.OnClickListener {
 
+    private static final int REQUEST_QRCODE = 0x01;
     /**
      * UI
      */
@@ -35,14 +43,15 @@ public class HomeFragment extends BaseFragment {
     private TextView mSearchView;
     private ListView mListView;
     private ImageView mLoadView;
+    private TextView mQrcodeView;//二维码
 
     /**
      * data
      */
-    private BaseRecommandModel mRecommandData ;
+    private BaseRecommandModel mRecommandData;
     private CourseAdapter mCourseAdapter;
 
-    public HomeFragment(){
+    public HomeFragment() {
 
     }
 
@@ -69,6 +78,8 @@ public class HomeFragment extends BaseFragment {
         mCategoryTextView = (TextView) view.findViewById(R.id.category_view);
         mListView = (ListView) view.findViewById(R.id.list_view);
         mLoadView = (ImageView) view.findViewById(R.id.loading_view);
+        mQrcodeView = (TextView) view.findViewById(R.id.qrcode_view);
+        mQrcodeView.setOnClickListener(this);
 
         AnimationDrawable anim = (AnimationDrawable) mLoadView.getDrawable();
         anim.start();
@@ -86,23 +97,26 @@ public class HomeFragment extends BaseFragment {
 
             @Override
             public void onFailure(Object reasonObj) {
-                Log.d(TAG, "onFailure: " + ((OkHttpException)reasonObj).getEmsg().toString());
+                Log.d(TAG, "onFailure:请求失败 " + ((OkHttpException) reasonObj).getEmsg());
             }
         });
     }
 
     /**
-     *请求成功执行方法
+     * 请求成功执行方法
      */
     private void showSuccessView() {
         //数据是否为空
-        if (mRecommandData.data.list!=null&&mRecommandData.data.list.size()>0){
+        if (mRecommandData.data.list != null && mRecommandData.data.list.size() > 0) {
             mLoadView.setVisibility(View.GONE);
             mListView.setVisibility(View.VISIBLE);
             //创建适配器
-            mCourseAdapter = new CourseAdapter(mContext,mRecommandData.data.list);
+            mCourseAdapter = new CourseAdapter(mContext, mRecommandData.data.list);
             mListView.setAdapter(mCourseAdapter);
-        }else {
+            //添加列表头
+            mListView.addHeaderView(new HomeHeaderLayout(mContext, mRecommandData.data.head));
+
+        } else {
             showErrorView();
         }
     }
@@ -114,4 +128,30 @@ public class HomeFragment extends BaseFragment {
     }
 
 
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        switch (id) {
+            case R.id.qrcode_view://弹出扫码界面
+                ActivityCompat.requestPermissions(mContext,
+                        new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        1);//6.0以上使用照相机需要在配置清单添加权限，同时需要使用代码动态申请权限
+                Intent intent = new Intent(mContext, CaptureActivity.class);
+                startActivityForResult(intent, REQUEST_QRCODE);
+                break;
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_QRCODE:
+                //扫码返回结果处理
+                if (resultCode == Activity.RESULT_OK) {
+                    String code = data.getStringExtra("SCAN_RESULT");
+                    Toast.makeText(mContext,"二维码结果:"+code,Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+    }
 }
