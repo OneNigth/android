@@ -12,7 +12,7 @@ import android.support.annotation.Nullable;
 
 public class BaseFragment extends Fragment {
     /**
-     * 上下文信息
+     * fragment上下文信息
      */
     protected Activity mContext;
     @Override

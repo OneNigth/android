@@ -1,10 +1,10 @@
 package com.example.yj.network.http;
 
-import com.example.CommonOkHttpClient;
-import com.example.listener.DisposeDataHandle;
-import com.example.listener.DisposeDataListener;
-import com.example.request.CommonRequest;
-import com.example.request.RequestParams;
+import com.example.okhttp.CommonOkHttpClient;
+import com.example.okhttp.listener.DisposeDataHandle;
+import com.example.okhttp.listener.DisposeDataListener;
+import com.example.okhttp.request.CommonRequest;
+import com.example.okhttp.request.RequestParams;
 import com.example.yj.model.recommand.BaseRecommandModel;
 
 /**
@@ -16,7 +16,7 @@ public class RequestCenter {
 
     //根据参数，发送post请求
     private static void postRequest (String url , RequestParams params , DisposeDataListener listener , Class<?> clazz){
-        CommonOkHttpClient.get(CommonRequest.creatGetRequest(url , params),new DisposeDataHandle(listener , clazz));
+        CommonOkHttpClient.get(CommonRequest.createGetRequest(url , params),new DisposeDataHandle(listener , clazz));
     }
 
     /**

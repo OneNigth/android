@@ -1,5 +1,7 @@
 package com.example.yj.model.recommand;
 
+import com.example.module.monitor.Monitor;
+import com.example.module.monitor.emevent.EMEvent;
 import com.example.yj.model.BaseModel;
 
 import java.util.ArrayList;
@@ -24,5 +26,15 @@ public class RecommandBodyValue extends BaseModel {
     public String zan;
     public ArrayList<String> url;
 
-
+    //视频专用
+    public String thumb;
+    public String resource;
+    public String resourceID;
+    public String adid;
+    public ArrayList<Monitor> startMonitor;
+    public ArrayList<Monitor> middleMonitor;
+    public ArrayList<Monitor> endMonitor;
+    public String clickUrl;
+    public ArrayList<Monitor> clickMonitor;
+    public EMEvent event;
 }

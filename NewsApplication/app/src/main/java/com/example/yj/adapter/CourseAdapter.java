@@ -1,6 +1,7 @@
 package com.example.yj.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,11 +12,16 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.activity.AdBrowserActivity;
+import com.example.adutil.LogUtil;
 import com.example.adutil.Utils;
+import com.example.core.AdContextInterface;
+import com.example.core.video.VideoAdContext;
 import com.example.yj.R;
 import com.example.yj.model.recommand.RecommandBodyValue;
 import com.example.yj.util.ImageLoaderManager;
 import com.example.yj.util.Util;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 
@@ -26,6 +32,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 
 public class CourseAdapter extends BaseAdapter {
+    private String TAG = "CourseAdapter";
+
     private static final int CARD_COUNT = 4;//一共有四种类型
     private static final int VIDEO_TYPE = 0x00;
     private static final int CARD_TYPE_ONE = 0x01;//横向多图
@@ -37,6 +45,7 @@ public class CourseAdapter extends BaseAdapter {
     private ArrayList<RecommandBodyValue> mData;
     private ImageLoaderManager mImageLoaderManager;//图片加载
     private ViewHolder mViewHolder;//UI组件
+    private VideoAdContext mVideoAdContext;
 
     public CourseAdapter(Context context, ArrayList<RecommandBodyValue> data) {
         mData = data;
@@ -76,7 +85,7 @@ public class CourseAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         //当前position对应类型
         int type = getItemViewType(position);
-        RecommandBodyValue bodyValue = (RecommandBodyValue) getItem(position);
+        final RecommandBodyValue bodyValue = (RecommandBodyValue) getItem(position);
         //初始化数据
         //无缓存时
         if (convertView == null) {
@@ -120,7 +129,37 @@ public class CourseAdapter extends BaseAdapter {
                     mViewHolder.viewPager.setCurrentItem(recommandList.size()*100);
                     break;
                 case VIDEO_TYPE:
-                    convertView = mInflater.inflate(R.layout.item_product_card_one_layout, parent, false);//晚些时候删除
+//                    convertView = mInflater.inflate(R.layout.item_product_card_one_layout, parent, false);//晚些时候删除
+                    //显示video卡片
+                    mViewHolder = new ViewHolder();
+                    convertView = mInflater.inflate(R.layout.item_video_layout, parent, false);
+                    mViewHolder.videoContentLayout = (RelativeLayout)
+                            convertView.findViewById(R.id.video_ad_layout);
+                    mViewHolder.logoView = (CircleImageView) convertView.findViewById(R.id.item_logo_view);
+                    mViewHolder.titleView = (TextView) convertView.findViewById(R.id.item_title_view);
+                    mViewHolder.infoTextView = (TextView) convertView.findViewById(R.id.item_info_view);
+                    mViewHolder.footerView = (TextView) convertView.findViewById(R.id.item_footer_view);
+                    mViewHolder.shareView = (ImageView) convertView.findViewById(R.id.item_share_view);
+                    //为对应布局创建播放器
+                    String url = new Gson().toJson(bodyValue);
+                    LogUtil.d(TAG,"视频："+url);
+                    mVideoAdContext = new VideoAdContext(mViewHolder.videoContentLayout,url);
+                    mVideoAdContext.setAdResultListener(new AdContextInterface() {//广告
+                        @Override
+                        public void onAdSuccess() {
+                        }
+
+                        @Override
+                        public void onAdFailed() {
+                        }
+
+                        @Override
+                        public void onClickVideo(String url) {
+                            Intent intent = new Intent(mContext, AdBrowserActivity.class);
+                            intent.putExtra(AdBrowserActivity.KEY_URL, url);
+                            mContext.startActivity(intent);
+                        }
+                    });
                     break;
             }
             //设置缓存
@@ -130,6 +169,26 @@ public class CourseAdapter extends BaseAdapter {
         }
         //向item填充数据
         switch (type) {
+            case VIDEO_TYPE:
+                mImageLoaderManager.displayImage(mViewHolder.logoView, bodyValue.logo);
+                mViewHolder.titleView.setText(bodyValue.title);
+                mViewHolder.infoTextView.setText(bodyValue.info.concat(mContext.getString(R.string.tian_qian)));
+                mViewHolder.footerView.setText(bodyValue.text);
+//                mViewHolder.shareView.setOnClickListener(new View.OnClickListener() {//分享
+//                    @Override
+//                    public void onClick(View v) {
+//                        ShareDialog dialog = new ShareDialog(mContext, false);
+//                        dialog.setShareType(Platform.SHARE_VIDEO);
+//                        dialog.setShareTitle(bodyValue.title);
+//                        dialog.setShareTitleUrl(bodyValue.site);
+//                        dialog.setShareText(bodyValue.text);
+//                        dialog.setShareSite(bodyValue.title);
+//                        dialog.setShareTitle(bodyValue.site);
+//                        dialog.setUrl(bodyValue.resource);
+//                        dialog.show();
+//                    }
+//                });
+                break;
             case CARD_TYPE_ONE://多图item
                 mViewHolder.footerView.setText(bodyValue.text);
                 mViewHolder.titleView.setText(bodyValue.title);
@@ -164,6 +223,14 @@ public class CourseAdapter extends BaseAdapter {
         return convertView;
     }
 
+    /**
+     * 出现屏幕大于50%时自动播放
+     */
+    public void updateAdInScrollView(){
+        if(mVideoAdContext!=null){
+            mVideoAdContext.updateVideoInScrollView();
+        }
+    }
     /**
      * 创建ImageView
      */

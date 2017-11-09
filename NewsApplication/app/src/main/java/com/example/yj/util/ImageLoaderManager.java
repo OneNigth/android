@@ -62,7 +62,7 @@ public class ImageLoaderManager {
                 .tasksProcessingOrder(QueueProcessingType.FIFO)     //图片下载顺序
                 .defaultDisplayImageOptions(getDefultOptions())     //默认加载图片的Options
                 .imageDownloader(new BaseImageDownloader(context, CONNECTION_TIME_OUT, READ_TIME_OUT))//设置图片下载器---------》默认
-                .writeDebugLogs()   //debug模式输出日志
+                .writeDebugLogs()  //debug模式输出日志
                 .build();
 
         ImageLoader.getInstance().init(configuration);

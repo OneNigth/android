@@ -1,9 +1,9 @@
 package com.example.firstsdk;
 
-import com.example.CommonOkHttpClient;
-import com.example.listener.DisposeDataHandle;
-import com.example.listener.DisposeDataListener;
-import com.example.request.CommonRequest;
+import com.example.okhttp.CommonOkHttpClient;
+import com.example.okhttp.listener.DisposeDataHandle;
+import com.example.okhttp.listener.DisposeDataListener;
+import com.example.okhttp.request.CommonRequest;
 
 import org.junit.Test;
 

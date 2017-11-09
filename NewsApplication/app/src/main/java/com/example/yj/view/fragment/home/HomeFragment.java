@@ -11,13 +11,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.exception.OkHttpException;
-import com.example.listener.DisposeDataListener;
+import com.example.okhttp.listener.DisposeDataListener;
 import com.example.yj.R;
 import com.example.yj.adapter.CourseAdapter;
 import com.example.yj.model.recommand.BaseRecommandModel;
@@ -115,6 +116,18 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
             mListView.setAdapter(mCourseAdapter);
             //添加列表头
             mListView.addHeaderView(new HomeHeaderLayout(mContext, mRecommandData.data.head));
+            //添加滑动时间监听
+            mListView.setOnScrollListener(new AbsListView.OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+                }
+
+                @Override
+                public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                    mCourseAdapter.updateAdInScrollView();//视频可视面积大于50%自动播放
+                }
+            });
 
         } else {
             showErrorView();
