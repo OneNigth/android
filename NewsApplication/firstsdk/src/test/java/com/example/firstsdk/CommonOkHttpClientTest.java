@@ -28,7 +28,7 @@ public class CommonOkHttpClientTest {
 //            }
 //        });
         //callback封装后
-        CommonOkHttpClient.get(CommonRequest.creatGetRequest("http://www.imook.com", null),
+        CommonOkHttpClient.get(CommonRequest.createGetRequest("http://www.imook.com", null),
                 new DisposeDataHandle(new DisposeDataListener() {
                     @Override
                     public void onSuccess(Object responseObj) {

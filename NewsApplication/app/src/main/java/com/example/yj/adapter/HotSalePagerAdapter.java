@@ -1,15 +1,17 @@
 package com.example.yj.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.view.PagerAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.adutil.LogUtil;
 import com.example.yj.R;
+import com.example.yj.activity.CourseDetailActivity;
 import com.example.yj.model.recommand.RecommandBodyValue;
 import com.example.yj.util.ImageLoaderManager;
 
@@ -55,13 +57,13 @@ public class HotSalePagerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
         //取余-----------无线滚动
-        RecommandBodyValue bodyValue = mData.get(position % mData.size());
+        final RecommandBodyValue bodyValue = mData.get(position % mData.size());
         /**
          * 初始化
          */
         View rootView = mLnflater.inflate(R.layout.item_hot_product_pager_layout, null);
         TextView titleView = (TextView) rootView.findViewById(R.id.title_view);
-        TextView infoView = (TextView) rootView.findViewById(R.id.info_view);
+        final TextView infoView = (TextView) rootView.findViewById(R.id.info_view);
         TextView gonggaoView = (TextView) rootView.findViewById(R.id.gonggao_view);
         TextView saleView = (TextView) rootView.findViewById(R.id.sale_num_view);
         ImageView[] imageViews = new ImageView[3];
@@ -71,9 +73,16 @@ public class HotSalePagerAdapter extends PagerAdapter {
         /**
          * 组件添加数据
          */
-        Log.d(TAG, "instantiateItem: titleView----------------------->"+titleView);
-        Log.d(TAG, "instantiateItem: bodyValue.title----------------------->"+bodyValue.title);
+        LogUtil.d(TAG, "instantiateItem: titleView----------------------->"+titleView);
 
+        rootView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext , CourseDetailActivity.class);
+                intent.putExtra(CourseDetailActivity.COURSE_ID,bodyValue.adid);
+                mContext.startActivity(intent);
+            }
+        });
         titleView.setText(bodyValue.title);
         infoView.setText(bodyValue.price);
         gonggaoView.setText(bodyValue.info);

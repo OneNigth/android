@@ -35,10 +35,10 @@ public class CourseAdapter extends BaseAdapter {
     private String TAG = "CourseAdapter";
 
     private static final int CARD_COUNT = 4;//一共有四种类型
-    private static final int VIDEO_TYPE = 0x00;
-    private static final int CARD_TYPE_ONE = 0x01;//横向多图
-    private static final int CARD_TYPE_TWO = 0x02;//单图
-    private static final int CARD_TYPE_THREE = 0x03;//viewpager
+    public static final int VIDEO_TYPE = 0x00;
+    public static final int CARD_TYPE_ONE = 0x01;//横向多图
+    public static final int CARD_TYPE_TWO = 0x02;//单图
+    public static final int CARD_TYPE_THREE = 0x03;//viewpager
 
     private LayoutInflater mInflater;
     private Context mContext;

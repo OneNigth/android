@@ -41,7 +41,7 @@ public class PhotoPagerAdapter extends PagerAdapter {
     public View instantiateItem(ViewGroup container, int position) {
         ImageView photoView;
         if (mIsMatch) {
-            photoView = new ImageView(mContext);
+            photoView = new PhotoView(mContext);
             photoView.setScaleType(ScaleType.FIT_XY);
 //            photoView.setOnClickListener(new View.OnClickListener() {
 //                @Override

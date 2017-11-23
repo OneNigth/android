@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -20,8 +21,10 @@ import android.widget.Toast;
 import com.example.exception.OkHttpException;
 import com.example.okhttp.listener.DisposeDataListener;
 import com.example.yj.R;
+import com.example.yj.activity.PhotoActivity;
 import com.example.yj.adapter.CourseAdapter;
 import com.example.yj.model.recommand.BaseRecommandModel;
+import com.example.yj.model.recommand.RecommandBodyValue;
 import com.example.yj.network.http.RequestCenter;
 import com.example.yj.view.fragment.BaseFragment;
 import com.example.yj.view.home.HomeHeaderLayout;
@@ -33,7 +36,7 @@ import static android.content.ContentValues.TAG;
  * Created by yj on 2017/9/15.
  */
 
-public class HomeFragment extends BaseFragment implements View.OnClickListener {
+public class HomeFragment extends BaseFragment implements View.OnClickListener, AdapterView.OnItemClickListener {
 
     private static final int REQUEST_QRCODE = 0x01;
     /**
@@ -86,6 +89,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         anim.start();
     }
 
+
     private void requestRecommandData() {
         RequestCenter.requestRecommandData(new DisposeDataListener() {
             @Override
@@ -114,6 +118,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
             //创建适配器
             mCourseAdapter = new CourseAdapter(mContext, mRecommandData.data.list);
             mListView.setAdapter(mCourseAdapter);
+            mListView.setOnItemClickListener(this);
             //添加列表头
             mListView.addHeaderView(new HomeHeaderLayout(mContext, mRecommandData.data.head));
             //添加滑动时间监听
@@ -165,6 +170,16 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
                     Toast.makeText(mContext,"二维码结果:"+code,Toast.LENGTH_SHORT).show();
                 }
                 break;
+        }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        RecommandBodyValue value = (RecommandBodyValue) mCourseAdapter.getItem(position - mListView.getHeaderViewsCount());//计数减去列表头数量
+        if (value.type != CourseAdapter.VIDEO_TYPE) {//除了视频类型的item
+            Intent intent = new Intent(mContext, PhotoActivity.class);
+            intent.putStringArrayListExtra(PhotoActivity.PHOTO_LIST, value.url);
+            startActivity(intent);
         }
     }
 }

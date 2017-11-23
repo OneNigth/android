@@ -24,7 +24,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private BaseFragment mHomeFragment, mMessageFragment, mMineFragment;
     private FragmentManager fragmentManager;
-
+    private Fragment mCurrent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +102,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     mMessageFragment = new HomeFragment();
                     fragmentTransaction.add(R.id.content_layout, mMessageFragment);
                 } else {
+
                     fragmentTransaction.show(mMessageFragment);
                 }
 
@@ -118,7 +119,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 hideFragment(mMessageFragment,fragmentTransaction);
                 //显示mHomeFragment
                 if (mMineFragment == null) {
-                    mMineFragment = new HomeFragment();
+                    mMineFragment = new MineFragment();
                     fragmentTransaction.add(R.id.content_layout, mMineFragment);
                 } else {
                     fragmentTransaction.show(mMineFragment);
